@@ -37,6 +37,11 @@ async function run() {
         //my operations
 
         //get operations
+        app.get('/busses', async(req, res) => {
+            const query = { subCategory: "bus" };
+            const toys = await toyCars.find(query).toArray();
+            res.send(toys)
+        })
         //post operations
         app.post('/addatoy', async (req, res) => {
             const toy = req.body;
