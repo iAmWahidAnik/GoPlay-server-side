@@ -30,10 +30,19 @@ async function run() {
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
+        // my DB & collections 
+        const GoPlay = client.db("GoPlay");
+        const toyCars = GoPlay.collection("toyCars");
+
         //my operations
-        
+
         //get operations
         //post operations
+        app.post('/addatoy', async (req, res) => {
+            const toy = req.body;
+            const result = await toyCars.insertOne(toy);
+            res.send(result)
+        })
         //update operations
         //delete operations
 
