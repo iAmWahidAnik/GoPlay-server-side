@@ -37,6 +37,16 @@ async function run() {
         //my operations
 
         //get operations
+        app.get('/cars', async(req, res) => {
+            const query = { subCategory: "car" };
+            const toys = await toyCars.find(query).toArray();
+            res.send(toys)
+        })
+        app.get('/trucks', async(req, res) => {
+            const query = { subCategory: "truck" };
+            const toys = await toyCars.find(query).toArray();
+            res.send(toys)
+        })
         app.get('/busses', async(req, res) => {
             const query = { subCategory: "bus" };
             const toys = await toyCars.find(query).toArray();
