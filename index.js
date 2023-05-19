@@ -19,13 +19,22 @@ const client = new MongoClient(uri, {
         version: ServerApiVersion.v1,
         strict: true,
         deprecationErrors: true,
-    }
+    },
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 10,
 });
 
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        // await client.connect();
+        client.connect((error) => {
+            if(error){
+                console.error(error);
+                return;
+            }
+        });
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -47,7 +56,8 @@ async function run() {
             const user = req.query.user;
             const sort = req.query.sort;
             if (query) {
-                const toy = await toyCars.find({ productName: { $regex: query, $options: 'i'} }).toArray();
+                const toy = await toyCars.find
+                ({ productName: { $regex: query, $options: 'i'} }).toArray();
                 res.send(toy);
             } 
             else if(user){
