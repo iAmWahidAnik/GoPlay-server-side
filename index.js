@@ -34,24 +34,46 @@ async function run() {
         const GoPlay = client.db("GoPlay");
         const toyCars = GoPlay.collection("toyCars");
 
+        // creating indexes 
+        const indexKeys = { productName: 1 };
+        const indexOptions = { name: 'productName_1' };
+        const result = await toyCars.createIndex(indexKeys, indexOptions)
+
         //my operations
 
         //get operations
-        app.get('/cars', async(req, res) => {
+        app.get('/alltoys', async (req, res) => {
+            const query = req.query.searchText;
+            // console.log(query);
+            if (query) {
+                const toy = await toyCars.find({ productName: { $regex: query, $options: 'i'} }).toArray();
+                res.send(toy);
+            }
+            else {
+                const toys = await toyCars.find().toArray();
+                res.send(toys)
+            }
+
+        })
+        app.get('/cars', async (req, res) => {
             const query = { subCategory: "car" };
             const toys = await toyCars.find(query).toArray();
             res.send(toys)
         })
-        app.get('/trucks', async(req, res) => {
+        app.get('/trucks', async (req, res) => {
             const query = { subCategory: "truck" };
             const toys = await toyCars.find(query).toArray();
             res.send(toys)
         })
-        app.get('/busses', async(req, res) => {
+        app.get('/busses', async (req, res) => {
             const query = { subCategory: "bus" };
             const toys = await toyCars.find(query).toArray();
             res.send(toys)
         })
+        // app.get('/alltoys', async(req, res) => {
+        //     const query = req.query;
+        //     console.log(query);
+        // })
         //post operations
         app.post('/addatoy', async (req, res) => {
             const toy = req.body;
