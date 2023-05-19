@@ -44,13 +44,18 @@ async function run() {
         //get operations
         app.get('/alltoys', async (req, res) => {
             const query = req.query.searchText;
-            // console.log(query);
+            const user = req.query.user;
+            const sort = req.query.sort;
             if (query) {
                 const toy = await toyCars.find({ productName: { $regex: query, $options: 'i'} }).toArray();
                 res.send(toy);
+            } 
+            else if(user){
+                const toys = await toyCars.find({email: user}).sort({price: sort}).toArray();
+                res.send(toys);
             }
             else {
-                const toys = await toyCars.find().toArray();
+                const toys = await toyCars.find().limit(20).toArray();
                 res.send(toys)
             }
 
@@ -76,18 +81,41 @@ async function run() {
             const toy = await toyCars.findOne(query);
             res.send(toy);
         })
-        // app.get('/alltoys', async(req, res) => {
-        //     const query = req.query;
-        //     console.log(query);
-        // })
-        //post operations
         app.post('/addatoy', async (req, res) => {
             const toy = req.body;
             const result = await toyCars.insertOne(toy);
             res.send(result)
         })
+
         //update operations
+        app.patch('/updateatoy/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const toy = req.body;
+            const updatedToy = {
+                $set: {
+                    photoLink: toy.photoLink,
+                    productName: toy.productName,
+                    sellerName: toy.sellerName,
+                    email: toy.email,
+                    subCategory: toy.subCategory,
+                    price: toy.price,
+                    rating: toy.rating,
+                    qty: toy.qty,
+                    description: toy.description
+                }
+            }
+            const result = await toyCars.updateOne(query, updatedToy);
+            res.send(result);
+        })
+
         //delete operations
+        app.delete('/toy/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await toyCars.deleteOne(query);
+            res.send(result);
+        })
 
     } finally {
         // Ensures that the client will close when you finish/error
