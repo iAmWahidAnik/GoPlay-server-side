@@ -20,9 +20,9 @@ const client = new MongoClient(uri, {
         strict: true,
         deprecationErrors: true,
     },
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    maxPoolSize: 10,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
+    // maxPoolSize: 10,
 });
 
 async function run() {
@@ -44,32 +44,13 @@ async function run() {
         const toyCars = GoPlay.collection("toyCars");
 
         // creating indexes 
-        const indexKeys = { productName: 1 };
-        const indexOptions = { name: 'productName_1' };
-        const result = await toyCars.createIndex(indexKeys, indexOptions)
+        // const indexKeys = { productName: 1 };
+        // const indexOptions = { name: 'productName_1' };
+        // const result = await toyCars.createIndex(indexKeys, indexOptions)
 
         //my operations
 
         //get operations
-        app.get('/alltoys', async (req, res) => {
-            const query = req.query.searchText;
-            const user = req.query.user;
-            const sort = req.query.sort;
-            if (query) {
-                const toy = await toyCars.find
-                ({ productName: { $regex: query, $options: 'i'} }).toArray();
-                res.send(toy);
-            } 
-            else if(user){
-                const toys = await toyCars.find({email: user}).sort({price: sort}).toArray();
-                res.send(toys);
-            }
-            else {
-                const toys = await toyCars.find().limit(20).toArray();
-                res.send(toys)
-            }
-
-        })
         app.get('/cars', async (req, res) => {
             const query = { subCategory: "car" };
             const toys = await toyCars.find(query).toArray();
@@ -84,6 +65,25 @@ async function run() {
             const query = { subCategory: "bus" };
             const toys = await toyCars.find(query).toArray();
             res.send(toys)
+        })
+        app.get('/alltoys', async (req, res) => {
+            const query = req.query.searchText;
+            const user = req.query.user;
+            const sort = req.query.sort;
+            if (query) {
+                const toy = await toyCars.find
+                ({ productName: query }).toArray();
+                res.send(toy);
+            } 
+            else if(user){
+                const toys = await toyCars.find({email: user}).sort({price: sort}).toArray();
+                res.send(toys);
+            }
+            else {
+                const toys = await toyCars.find().limit(20).toArray();
+                res.send(toys)
+            }
+
         })
         app.get('/alltoys/:id', async(req, res) => {
             const id = req.params.id;
