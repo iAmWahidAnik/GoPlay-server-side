@@ -28,15 +28,15 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        client.connect((error) => {
-            if(error){
-                console.error(error);
-                return;
-            }
-        });
+        // client.connect((error) => {
+        //     if(error){
+        //         console.error(error);
+        //         return;
+        //     }
+        // });
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         // my DB & collections 
@@ -91,6 +91,8 @@ async function run() {
             const toy = await toyCars.findOne(query);
             res.send(toy);
         })
+
+        // post operations 
         app.post('/addatoy', async (req, res) => {
             const toy = req.body;
             const result = await toyCars.insertOne(toy);
